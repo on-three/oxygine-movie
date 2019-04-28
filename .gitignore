@@ -22,3 +22,6 @@ examples/Movie/proj.win32/Release_v140_xp/
 examples/Movie/proj.win32/.vs/
 *.suo
 *.user
+
+.vscode/ipch
+examples/Movie/proj.cmake/web-build
