@@ -1,9 +1,15 @@
 #!/bin/bash
+set -e
 
 BUILD_DIR=web-build
+MOVIE_DIR=../data/movies
 TARGET=Movie.html
 
-mkdir ${BUILD_DIR}
+mkdir -p ${BUILD_DIR}
+
+# We access videos via http so we need them in our bin folder
+cp -r ${MOVIE_DIR} ${BUILD_DIR}
+
 cd ${BUILD_DIR}
 
 MAKE="emmake make"
@@ -14,4 +20,5 @@ ${CMAKE} ..
 
 #build it
 ${MAKE} VERBOSE=1
+
 

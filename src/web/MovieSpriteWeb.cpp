@@ -21,6 +21,8 @@
 #include "oxygine/utils/cdecode.h"
 //#include "core/gl/oxgl.h"
 
+#include "emscripten.h"
+
 #define PREMULT_MOVIE 0
 
 namespace oxygine
@@ -1245,14 +1247,9 @@ namespace oxygine
         return new MovieSpriteWeb;
     }
 
-    MovieSpriteWeb::MovieSpriteWeb() : _file(0)
-    #if 0
-    , _decoder(0)
-    #endif
+    MovieSpriteWeb::MovieSpriteWeb()
     {
-        #if 0
-        _threadID = pthread_self();
-        #endif
+
     }
 
     MovieSpriteWeb::~MovieSpriteWeb()
@@ -1262,50 +1259,79 @@ namespace oxygine
 
     void MovieSpriteWeb::_initPlayer()
     {
-        OX_ASSERT(_file == 0);
-        //OX_ASSERT(_decoder == 0);
+        // just start playing the video at '_fname' relative url
+        unsigned int self = *reinterpret_cast<unsigned int*>(this);
+        EM_ASM_INT({
 
-        _file = file::open(_fname.c_str(), "srb");
+            var self = $0|0;
+            var file = Pointer_stringify($1|0);
 
-        #if 0
-        _decoder = new OggDecoder(_mtUV, _mtYA, _mutex, _msg, _looped, _hasAlphaChannel, _skipFrames);
-        _decoder->init(_file);
-        _movieRect = _decoder->_pictureRect;
-        _bufferSize = _decoder->_frameSize;
-        setSize(_movieRect.getSize());
-        #else
-        setSize(100,100);
-        #endif
-        
+            // DEBUG: ensure we can play ogv video
+            console.log("MovieSpriteWeb playing video ", file);
+            //if (x.canPlayType('video/ogg').length > 0) {
+            //    console.log("This browser supports ogg video");
+            //}else{
+            //    console.log("This browser DOES NOT SUPPORT ogg video");
+            //}
+            
+            var video = document.createElement("VIDEO");
+
+            // TODO: support filetypes?
+            //if (video.canPlayType("video/mp4")) {
+            //    video.setAttribute("src","movie.mp4");
+            //} else {
+
+            video.setAttribute("src",file);
+            video.setAttribute("width", "320");
+            video.setAttribute("height", "240");
+            video.setAttribute("controls", "false");
+            document.body.appendChild(video);
+
+            // let emscripten keep track of these video elements
+            // so we can interact with them
+            //if(!Module.videos) Module.videos = {};
+            Module['videos'] = Module['videos'] || {};
+            Module.videos[self] = video;
+
+            return 0;
+        }
+        ,self
+        ,_fname.c_str());
+
+        setSize(320,240);    
     }
 
     void MovieSpriteWeb::_play()
     {
-        #if 0
-        pthread_attr_t attr;
-        pthread_attr_init(&attr);
-        pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-        pthread_create(&_threadID, &attr, &MovieSpriteWeb::_thread, this);
-
-        _msg.send(MSG_WAIT_FIRST_FRAME, 0, 0);
-        #endif
+        unsigned int self = *reinterpret_cast<unsigned int*>(this);
+        EM_ASM_INT({
+            var self = $0|0;
+            if(Module.videos[self])
+                Module.videos[self].play();
+            return 0;
+        }
+        ,self);
     }
 
     void MovieSpriteWeb::_pause()
     {
-        #if 0
-        _msg.post(MSG_PAUSE, 0, 0);
-        #endif
+        unsigned int self = *reinterpret_cast<unsigned int*>(this);
+        EM_ASM_INT({
+            var self = $0|0;
+            if(Module.videos[self])
+                Module.videos[self].pause();
+            return 0;
+        }
+        ,self);
+        _paused = true;
     }
 
     void MovieSpriteWeb::_resume()
     {
-        #if 0
         if (!_paused)
             return;
 
-        _msg.post(MSG_RESUME, 0, 0);
-        #endif
+        _play();
     }
 
     void MovieSpriteWeb::_setVolume(float v)
@@ -1329,36 +1355,7 @@ namespace oxygine
 
     void MovieSpriteWeb::_clear()
     {
-        #if 0
-        _msg.clear();
-        if (!pthread_equal(_threadID, pthread_self()))
-        {
-            if (_paused)
-                _msg.post(MSG_RESUME, 0, 0);
-            _msg.post(MSG_STOP, 0, 0);
 
-            void* ptr = 0;
-            pthread_join(_threadID, &ptr);
-            _threadID = pthread_self();
-            _msg.clear();
-        }
-
-
-        if (_decoder)
-            for (StreamMap::iterator it = _decoder->mStreams.begin(); it != _decoder->mStreams.end(); ++it)
-            {
-                TheoraOggStream* stream = (*it).second;
-                delete stream;
-            }
-
-
-        delete _decoder;
-        _decoder = 0;
-        #endif
-
-        if (_file)
-            file::close(_file);
-        _file = 0;
     }
 
     void MovieSpriteWeb::_update(const UpdateState&)
@@ -1376,118 +1373,4 @@ namespace oxygine
         }
         #endif
     }
-
-    void* MovieSpriteWeb::_thread(void* This)
-    {
-        #if 0
-        MovieSpriteWeb* _this = (MovieSpriteWeb*)This;
-        _this->_threadThis();
-        #endif
-        return 0;
-    }
-
-    void MovieSpriteWeb::_threadThis()
-    {
-        #if 0
-        bool stopped = _decoder->play(_file);
-
-        if (!stopped)
-        {
-            file::seek(_file, 0, SEEK_SET);
-
-            asyncDone();
-        }
-        #endif
-    }
-
-
-    /*
-    class MovieTween : public Tween
-    {
-    public:
-        MovieTween(const string& name, bool alpha): _alpha(alpha)
-        {
-            OX_ASSERT(_file == 0);
-            OX_ASSERT(_decoder == 0);
-
-            _looped = false;
-
-            _file = file::open(_fname.c_str(), "srb");
-            _decoder = new OggDecoder(_mtUV, _mtYA, _mutex, _msg, _looped, _alpha);
-            _decoder->init(_file);
-
-            //_movieRect = _decoder->_pictureRect;
-            //_bufferSize = _decoder->_frameSize;
-            //setSize(_movieRect.getSize());
-        }
-
-        void _start(Actor& actor) OVERRIDE
-        {
-            Sprite& spr = safeCast<Sprite&>(actor);
-
-            Point sz = _decoder->_frameSize;
-            sz = Point(nextPOT(sz.x), nextPOT(sz.y));
-
-            _mtUV.init(sz.x / 2, sz.y / 2, TF_A8L8);
-            _mtUV.fill_zero();
-
-            _textureUV = IVideoDriver::instance->createTexture();
-            _textureUV->init(sz.x, sz.y, _mtUV.getFormat(), false);
-
-            _mtYA.init(sz.x, sz.y, _alpha ? TF_A8L8 : TF_L8);
-            _mtYA.fill_zero();
-            _textureYA = IVideoDriver::instance->createTexture();
-            _textureYA->init(sz.x, sz.y, _mtYA.getFormat(), false);
-
-            if (_alpha)
-                spr.setBlendMode(blend_premultiplied_alpha);
-            else
-                spr.setBlendMode(blend_disabled);
-
-            Diffuse d;
-            d.base = _textureYA;
-            d.alpha = _textureUV;
-            d.premultiplied = true;
-
-            AnimationFrame frame;
-            RectF mr = _movieRect.cast<RectF>();
-            Vector2 szf = sz.cast<Vector2>();
-            RectF uv = RectF(mr.pos.div(szf), mr.size.div(szf));
-            frame.init(0, d, uv, mr, mr.size);
-
-            Vector2 s = getSize();
-            setAnimFrame(frame);
-            setSize(s);
-
-            //Sprite::doRender()
-        }
-
-        bool _looped;
-        bool _alpha;
-
-        Mutex _mutex;
-
-        Point _bufferSize;
-        Rect _movieRect;
-
-        MemoryTexture _mtUV;
-        MemoryTexture _mtYA;
-        spNativeTexture _textureUV;
-        spNativeTexture _textureYA;
-
-
-        std::string _fname;
-        OggDecoder* _decoder;
-        file::handle _file;
-        pthread_t _threadID;
-
-        ThreadMessages _msg;
-    };
-
-    spMovieTween createMovieTween(const std::string& name, bool alpha)
-    {
-        spMovieTween t = new MovieTween(name, alpha);
-        return t;
-    }
-    */
 }

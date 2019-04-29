@@ -11,9 +11,6 @@ namespace oxygine
         ~MovieSpriteWeb();
 
     protected:
-        static void* _thread(void* This);
-        void _threadThis();
-
         void _initPlayer() OVERRIDE;
         void _play() OVERRIDE;
         void _pause() OVERRIDE;
@@ -23,7 +20,5 @@ namespace oxygine
         bool _isPlaying() const  OVERRIDE;
         void _clear() OVERRIDE;
         void _update(const UpdateState&) OVERRIDE;
-
-        file::handle _file;
     };
 }
