@@ -4,10 +4,19 @@ project (OXYGINEMOVIE)
 set(OXYGINEMOVIE_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_SOURCE_DIR}/deps
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/libtheora/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/../oxygine-sound/dependencies/tremor/Tremor
-  ${CMAKE_CURRENT_SOURCE_DIR}/../oxygine-sound/dependencies/libogg/include
 	)
+
+if (NOT EMSCRIPTEN)
+  set(OXYGINEMOVIE_INCLUDE_DIRS ${OXYGINEMOVIE_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/libtheora/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../oxygine-sound/dependencies/tremor/Tremor
+    ${CMAKE_CURRENT_SOURCE_DIR}/../oxygine-sound/dependencies/libogg/include
+  )
+else()
+  set(OXYGINEMOVIE_INCLUDE_DIRS ${OXYGINEMOVIE_INCLUDE_DIRS}
+	  ${CMAKE_CURRENT_SOURCE_DIR}/src/web
+  )
+endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
@@ -16,11 +25,11 @@ message(status ${OXYGINEMOVIE_INCLUDE_DIRS})
 set(SRC
 	src/MovieSprite.h
 	src/MovieSprite.cpp
-  src/theora/MovieSpriteTheora.cpp
 	)
 
-
-set (SRC ${SRC}
+if (NOT EMSCRIPTEN)
+  set (SRC ${SRC}
+    src/theora/MovieSpriteTheora.cpp
     deps/libtheora/lib/analyze.c
     deps/libtheora/lib/apiwrapper.c
     deps/libtheora/lib/bitpack.c
@@ -47,7 +56,10 @@ set (SRC ${SRC}
     deps/libtheora/lib/rate.c
     deps/libtheora/lib/state.c
     deps/libtheora/lib/tokenize.c
-		)
+    )
+else()
+  set (SRC ${SRC} src/web/MovieSpriteWeb.cpp) 
+endif()
 
 add_library(oxygine-movie STATIC ${SRC})
 
@@ -64,6 +76,13 @@ set(OXYGINEMOVIE_LIBS
   tremor
   -logg
 	)
+
+if (NOT EMSCRIPTEN)
+  set(OXYGINEMOVIE_LIBS ${OXYGINEMOVIE_LIBS}
+    tremor
+    -logg
+  )
+endif()
 
 include_directories(${OXYGINEMOVIE_INCLUDE_DIRS})
 

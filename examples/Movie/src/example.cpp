@@ -13,17 +13,24 @@ using namespace oxygine;
 //It is important on mobile devices with limited memory and you would load/unload them
 Resources gameResources;
 
+#if 0
 class TestMovie : public Test
+#else
+DECLARE_SMART(TestMovie, spTestMovie)
+class TestMovie : public Actor
+#endif
 {
 public:
     TestMovie()
     {
+        #if 0
         addButton("common", "Common");
         addButton("stress", "Stress");
         addButton("check_converse", "Color conversion");
         addButton("prerender", "prerender");
 
         //clicked("prerender");
+        #endif
     }
     void clicked(string id)
     {
@@ -66,7 +73,9 @@ void example_init()
     bg->setBlendMode(blend_disabled);
     bg->setScale(getStage()->getSize().div(bg->getSize()));
 
+    #if 0
     Test::init();
+    #endif
 
     bool highQualityShader = false;
 #ifdef WIN32
@@ -75,8 +84,13 @@ void example_init()
 #endif
     MovieSprite::init(highQualityShader);
 
+    #if 0
     Test::instance = new TestMovie;
     getStage()->addChild(Test::instance);
+    #else
+    spTestMovie _movie = new TestMovie();
+    getStage()->addChild(_movie);
+    #endif
 
     /*
     //lets create our client code simple actor
@@ -101,5 +115,7 @@ void example_destroy()
     gameResources.free();
     MovieSprite::free();
 
+    #if 0
     Test::free();
+    #endif
 }
