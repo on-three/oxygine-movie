@@ -1,6 +1,10 @@
 cmake_minimum_required (VERSION 2.6)
 project (Movie)
 
+set(CMAKE_C_STANDARD 11)
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-overloaded-virtual")
+
 add_subdirectory(../../../../oxygine-framework oxygine-framework)
 
 add_definitions(${OXYGINE_DEFINITIONS})
@@ -13,7 +17,7 @@ include_directories(${OXYGINESOUND_INCLUDE_DIRS})
 add_subdirectory(../../../../oxygine-movie oxygine-movie)
 include_directories(${OXYGINEMOVIE_INCLUDE_DIRS})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OXYGINE_CXX_FLAGS}")
 
 include_directories(../src)
 add_executable(Movie
@@ -31,10 +35,10 @@ target_link_libraries(Movie
 
 
 if (EMSCRIPTEN)
-  SET (CMAKE_EXECUTABLE_SUFFIX ".html")
-  SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun -s NO_EXIT_RUNTIME=1 -s ALLOW_MEMORY_GROWTH=1 -s FORCE_FILESYSTEM=1 -s USE_SDL=2 -s USE_OGG=1 -s USE_LIBPNG=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/../data@/")
-  em_link_pre_js( Movie  ${OXYGINE_JS_LIBRARIES} )
-endif (EMSCRIPTEN)
+	SET(CMAKE_EXECUTABLE_SUFFIX ".html")	
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1 -s WASM=0 -s WARN_ON_UNDEFINED_SYMBOLS=1 --memory-init-file 0 -s TOTAL_MEMORY=50331648 -s FORCE_FILESYSTEM=1")
+	em_link_pre_js(Movie  ${OXYGINE_JS_LIBRARIES}  ${CMAKE_CURRENT_SOURCE_DIR}/data.js)
+endif(EMSCRIPTEN)
 
 
 if (WIN32) #disable console mode for VC++
