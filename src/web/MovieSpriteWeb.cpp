@@ -246,6 +246,11 @@ namespace oxygine
         }
         ,this
         ,_fname.c_str());
+
+        // HACK: force a size to debug basic texture handling
+        setBufferSize(720, 400);
+        setSize(720, 400);
+        _movieRect = Rect(0, 0, 720, 400);
     
     }
 
@@ -308,19 +313,120 @@ namespace oxygine
 
     void MovieSpriteWeb::_update(const UpdateState&)
     {
+        // we only have textures and image dimensions after the first frame has loaded
         #if 0
-        if (_decoder)
+        if(!_frameLoaded)
+            return;
+        #endif
+
+        #if 1
+        Image& _surfaceUV = _mtUV;
+        Image& _surfaceYA = _mtYA;
+        int w = _movieRect.getWidth();
+        int h = _movieRect.getHeight();
+        int stride = w; // TODO: correct?
+        
+        Image memUV;
+        #if 0
+        memUV.init(ti.frame_width / 2, ti.frame_height / 4, TF_A8L8);
+        #else
+        memUV.init(w / 2, h / 4, TF_A8L8);
+        #endif
+        memUV.fillZero();
+
+        ImageData dstUV = memUV.lock();
+        unsigned char* destUV = dstUV.data;
+
+        Image memYA;
+        #if 0
+        memYA.init(ti.frame_width, ti.frame_height / 2, TF_A8L8);
+        #else
+        memYA.init(w, h / 2, TF_A8L8);
+        #endif
+
+        ImageData dstYA = memYA.lock();
+        unsigned char* destYA = dstYA.data;
+
+        #if 0
+        if (_hasAlpha)
         {
-            _decoder->_mutex.lock();
-            if (_decoder->_updated)
+            h /= 2;
+            const unsigned char* srcA = srcY + ti.pic_height / 2 * buffer[0].stride;
+
+            for (int y = 0; y != h; y++)
             {
-                _dirty = true;
+                const unsigned char* srcLineA = srcA;
+                const unsigned char* srcLineY = srcY;
+                unsigned char* destLineYA = destYA;
+
+                for (int x = 0; x != w; x++)
+                {
+                    *destLineYA++ = *srcLineY++;
+                    unsigned char a = *srcLineA++;
+                    int v = (a - 16) * 255 / 219;
+                    *destLineYA++ = Clamp2Byte(v);
+                }
+                srcY += stride;
+                srcA += stride;
+
+                destYA += dstYA.pitch;
             }
-            _decoder->_updated = false;
-            _decoder->_mutex.unlock();
+        }
+        else
+        #endif
+        {
+            for (int y = 0; y != h; y++)
+            {
+                //const unsigned char* srcLineY = srcY;
+                unsigned char* destLineYA = destYA;
+
+                for (int x = 0; x != w; x++)
+                {
+                    #if 0
+                    *destLineYA++ = *srcLineY++;
+                    #else
+                    *destLineYA++ = 255;
+                    #endif
+                }
+                //srcY += stride;
+                destYA += dstYA.pitch;
+            }
+        }
+
+        #if 0
+        const unsigned char* srcU = buffer[2].data + ti.pic_y / 2 * buffer[2].stride;
+        const unsigned char* srcV = buffer[1].data + ti.pic_y / 2 * buffer[1].stride;
+        stride = buffer[1].stride;
+        w = buffer[1].width;
+        h = buffer[1].height;
+        #endif
+
+        #if 0
+        if (_hasAlpha)
+            h /= 2;
+        #endif
+
+        for (int y = 0; y != h; y++)
+        {
+            //const unsigned char* srcLineU = srcU;
+            //const unsigned char* srcLineV = srcV;
+            unsigned char* destLineUV = destUV;
+
+            for (int x = 0; x != w; x++)
+            {
+                #if 0
+                *destLineUV++ = *srcLineU++;
+                *destLineUV++ = *srcLineV++;
+                #else
+                *destLineUV++ = 255;
+                *destLineUV++ = 255;
+                #endif
+            }
+            //srcU += stride;
+            //srcV += stride;
+            destUV += dstUV.pitch;
         }
         #endif
-        if(_frameLoaded)
-            _dirty = true;
+        _dirty = true;
     }
 }
