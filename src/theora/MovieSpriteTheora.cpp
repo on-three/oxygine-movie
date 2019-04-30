@@ -891,6 +891,10 @@ namespace oxygine
             _frameSize.x = ti.frame_width;
             _frameSize.y = ti.frame_height;
 
+            #if 1
+            printf("%s:%d:%s video framesize: %d x %d\n", __FILE__, __LINE__, __func__,  _frameSize.x, _frameSize.y);
+            #endif
+
             _pictureRect = Rect(0, 0, ti.pic_width, ti.pic_height);
 
             if (_hasAlpha)
@@ -1262,6 +1266,11 @@ namespace oxygine
         _decoder->init(_file);
         _movieRect = _decoder->_pictureRect;
         _bufferSize = _decoder->_frameSize;
+
+        #if 1
+        //printf("%s:%d:%s video buffersize: %f x %f\n", __FILE__, __LINE__, __func__,  _bufferSize.w, _bufferSize.h);
+        printf("%s:%d:%s video _movieRect: %d x %d\n", __FILE__, __LINE__, __func__,  _movieRect.getWidth(), _movieRect.getHeight());
+        #endif
         setSize(_movieRect.getSize());
     }
 

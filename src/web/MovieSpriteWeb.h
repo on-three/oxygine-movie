@@ -10,6 +10,14 @@ namespace oxygine
         MovieSpriteWeb();
         ~MovieSpriteWeb();
 
+    public:
+    void setBufferSize(int width, int height)
+    {
+        _bufferSize = Point(width, height);
+    }
+    bool getFrameLoaded() const { return _frameLoaded;};
+    void setFrameLoaded(bool v) {_frameLoaded = v;};
+
     protected:
         void _initPlayer() OVERRIDE;
         void _play() OVERRIDE;
@@ -20,5 +28,8 @@ namespace oxygine
         bool _isPlaying() const  OVERRIDE;
         void _clear() OVERRIDE;
         void _update(const UpdateState&) OVERRIDE;
+
+        bool _frameLoaded = false;
+
     };
 }

@@ -25,6 +25,41 @@
 
 #define PREMULT_MOVIE 0
 
+extern "C"
+{
+EMSCRIPTEN_KEEPALIVE
+static int movieSpriteWeb_SetBufferSize(void* self, int width, int height)
+{
+    oxygine::MovieSpriteWeb* pMovie = static_cast<oxygine::MovieSpriteWeb*>(self);
+    #if 1
+    printf("%s:%d:%s setting buffer size to %d,%d\n", __FILE__, __LINE__, __func__, width, height);
+    #endif
+    pMovie->setBufferSize(width, height);
+    return 0;
+}
+EMSCRIPTEN_KEEPALIVE
+
+static int movieSpriteWeb_SetSize(void* self, int width, int height)
+{
+    oxygine::MovieSpriteWeb* pMovie = static_cast<oxygine::MovieSpriteWeb*>(self);
+    #if 1
+    printf("%s:%d:%s setting sprite size to %d,%d\n", __FILE__, __LINE__, __func__, width, height);
+    #endif
+    pMovie->setSize(width, height);
+    return 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+static int movieSpriteWeb_SetFrameLoaded(void* self, bool ready)
+{
+    oxygine::MovieSpriteWeb* pMovie = static_cast<oxygine::MovieSpriteWeb*>(self);
+    #if 1
+    printf("%s:%d:%s setting movie frameloaded state to %s\n", __FILE__, __LINE__, __func__, ready? "TRUE":"FALSE");
+    #endif
+    pMovie->setFrameLoaded(ready);
+    return 0;
+}
+}
 namespace oxygine
 {
     const int MSG_PAUSE = 1;
@@ -54,7 +89,7 @@ namespace oxygine
 
     void MovieSprite::init(bool highQualityShader)
     {
-        #if 0
+        #if 1
         _shader = new UberShaderProgram();
 
         string base =
@@ -101,8 +136,12 @@ namespace oxygine
 
         _shader->init(
             STDRenderer::uberShaderBody,
+            #if 0
             "#define REPLACED_GET_BASE\n"
             "lowp vec4 replaced_get_base();",
+            #else
+            "",
+            #endif
             base.c_str());
         #endif
     }
@@ -131,6 +170,10 @@ namespace oxygine
 
     void MovieSpriteWeb::_initPlayer()
     {
+        // To satisfy the MovieSprite base class
+        // we MUST define _bufferSize in this method, which can be pretty much
+        // the movie size (width x height) as an oxygine::Point
+
         // just start playing the video at '_fname' relative url
         unsigned int self = *reinterpret_cast<unsigned int*>(this);
         EM_ASM_INT({
@@ -158,6 +201,36 @@ namespace oxygine
             video.setAttribute("height", "240");
             video.setAttribute("controls", "false");
 
+            // when the video loads, pull out the dimensions so we can create texturs
+            video.addEventListener('loadeddata', (event) => {
+                console.log('Yay! The readyState just increased to  ' + 
+                    'HAVE_CURRENT_DATA or greater for the first time.');
+
+                // pass video size back to C++
+                var height = video.videoHeight; // returns the intrinsic height of the video
+                var width = video.videoWidth; // returns the intrinsic width of the video
+                console.log("Size of video is ", width, "x", height);
+
+                var movieSpriteWeb_SetBufferSize = Module.cwrap('movieSpriteWeb_SetBufferSize',
+                    'number', // return type
+                    ['number', 'number', 'number']); // argument types
+
+                var movieSpriteWeb_SetSize = Module.cwrap('movieSpriteWeb_SetSize',
+                    'number', // return type
+                    ['number', 'number', 'number']); // argument types
+
+                var movieSpriteWeb_SetFrameLoaded = Module.cwrap('movieSpriteWeb_SetFrameLoaded',
+                    'number', // return type
+                    ['number', 'boolean']); // argument types
+
+                movieSpriteWeb_SetBufferSize(self, width, height);
+                movieSpriteWeb_SetSize(self, width, height);
+                movieSpriteWeb_SetFrameLoaded(self, true);
+
+                return 0;
+
+            });
+
             // DEBUG:
             // Normally we just use the element to provide us a video texture
             // but if we want to see the actual element on the page, uncomment this
@@ -171,10 +244,9 @@ namespace oxygine
 
             return 0;
         }
-        ,self
+        ,this
         ,_fname.c_str());
-
-        setSize(320,240);    
+    
     }
 
     void MovieSpriteWeb::_play()
@@ -186,7 +258,7 @@ namespace oxygine
                 Module.videos[self].play();
             return 0;
         }
-        ,self);
+        ,this);
     }
 
     void MovieSpriteWeb::_pause()
@@ -198,7 +270,7 @@ namespace oxygine
                 Module.videos[self].pause();
             return 0;
         }
-        ,self);
+        ,this);
         _paused = true;
     }
 
@@ -248,5 +320,7 @@ namespace oxygine
             _decoder->_mutex.unlock();
         }
         #endif
+        if(_frameLoaded)
+            _dirty = true;
     }
 }
