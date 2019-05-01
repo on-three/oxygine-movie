@@ -356,7 +356,10 @@ namespace oxygine
 
     void MovieSpriteWeb::_clear()
     {
-
+        if(_videoTexture)
+            _videoTexture->release();
+        _videoTexture = 0;
+        _videoTextureID = -1;
     }
 
     void MovieSpriteWeb::_update(const UpdateState&)
@@ -404,9 +407,12 @@ namespace oxygine
 
     void MovieSpriteWeb::doRender(const RenderState& rs)
     {
-        convert();
+        // This call updates _textureUV and _textureYA from
+        // the current movie sprite.
+        // Probably not necesary as we maintain a separate video texture.
+        //convert();
 
-        if (!_ready)// && !_videoTexture)
+        if (!_ready && !_videoTexture)
             return;
 
         Material::null->apply();
