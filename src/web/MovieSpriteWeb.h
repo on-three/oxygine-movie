@@ -1,6 +1,7 @@
 #pragma once
 #include "MovieSprite.h"
 #include "oxygine/core/file.h"
+#include "oxygine/core/gl/oxgl.h" // for GLuint
 
 namespace oxygine
 {
@@ -18,6 +19,8 @@ namespace oxygine
     bool getFrameLoaded() const { return _frameLoaded;};
     void setFrameLoaded(bool v) {_frameLoaded = v;};
 
+    void setVideoTexture(GLuint id);
+
     protected:
         void _initPlayer() OVERRIDE;
         void _play() OVERRIDE;
@@ -29,7 +32,12 @@ namespace oxygine
         void _clear() OVERRIDE;
         void _update(const UpdateState&) OVERRIDE;
 
+        // Override base impl to use video texture right from video player
+        void doRender(const RenderState& rs) OVERRIDE;
+
         bool _frameLoaded = false;
 
+        // Native video texture allocated by javascript
+        GLuint _videoTextureID = -1;
     };
 }

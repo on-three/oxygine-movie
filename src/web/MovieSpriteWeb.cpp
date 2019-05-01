@@ -10,6 +10,7 @@
 #include "pthread.h" */
 #include "oxygine/core/ImageDataOperations.h"
 #include "oxygine/core/UberShaderProgram.h"
+#include "oxygine/RenderState.h"
 #include "oxygine/STDRenderer.h"
 //#include "ivorbiscodec.h"
 #include <time.h>
@@ -59,6 +60,19 @@ static int movieSpriteWeb_SetFrameLoaded(void* self, bool ready)
     pMovie->setFrameLoaded(ready);
     return 0;
 }
+
+EMSCRIPTEN_KEEPALIVE
+static int movieSpriteWeb_setVideoTexture(void* self, int id)
+{
+    oxygine::MovieSpriteWeb* pMovie = static_cast<oxygine::MovieSpriteWeb*>(self);
+    #if 1
+    printf("%s:%d:%s setting video texture to %d\n", __FILE__, __LINE__, __func__, id);
+    #endif
+    // TODO: correct texture format
+    pMovie->setVideoTexture(id);
+    return 0;
+}
+
 }
 namespace oxygine
 {
@@ -168,6 +182,12 @@ namespace oxygine
         _clear();
     }
 
+    void MovieSpriteWeb::setVideoTexture(GLuint id)
+    {
+        _videoTextureID = id;
+    }
+   
+
     void MovieSpriteWeb::_initPlayer()
     {
         // To satisfy the MovieSprite base class
@@ -223,6 +243,10 @@ namespace oxygine
                     'number', // return type
                     ['number', 'boolean']); // argument types
 
+                var movieSpriteWeb_setVideoTexture = Module.cwrap('movieSpriteWeb_setVideoTexture',
+                    'number', // return type
+                    ['number', 'number']); // argument types
+
                 movieSpriteWeb_SetBufferSize(self, width, height);
                 movieSpriteWeb_SetSize(self, width, height);
                 movieSpriteWeb_SetFrameLoaded(self, true);
@@ -251,6 +275,30 @@ namespace oxygine
         setBufferSize(720, 400);
         setSize(720, 400);
         _movieRect = Rect(0, 0, 720, 400);
+
+        // create an opengl texture we can upload video to
+        glGenTextures(1, &_videoTextureID);
+        glBindTexture(GL_TEXTURE_2D, _videoTextureID);
+
+        unsigned int* data = new unsigned int[720*400];
+        for(int row = 0; row < 400; ++row)
+            for(int col = 0; col < 720; ++col)
+            {
+                data[row * 720 + col] = 0xff00ffff;
+            }
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 720, 400, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)data);
+        //glGenerateMipmap(GL_TEXTURE_2D);
+        delete [] data;
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        #if 1
+        printf("Created and uploaded video texture with gl ID: %d\n", _videoTextureID);
+        #endif
     
     }
 
@@ -314,10 +362,59 @@ namespace oxygine
     void MovieSpriteWeb::_update(const UpdateState&)
     {
         // we only have textures and image dimensions after the first frame has loaded
-        #if 0
+        #if 1
         if(!_frameLoaded)
             return;
         #endif
+
+        static bool _assigned = false;
+
+        int failure = EM_ASM_INT({
+
+            var self = ($0|0);
+            var id = ($1|0);
+            var texture =  GL.textures[id];
+
+/*             // DEBUG:
+            if(texture)
+                console.log("Texture object for gl id: ", id," exists...");
+            else
+                console.log("Texture object for gl id: ", id," does not exist.") */;
+
+            // DEBUG:
+            //return 0;
+
+            if(!Module['videos'] && !Module.videos[self])
+            {
+                console.log("Bailing on _update js because no Module['videos'] yet...");
+                return 1;
+            }
+            var video = Module.videos[self];
+
+            const level = 0;
+            const internalFormat = GLctx.RGBA;
+            const srcFormat = GLctx.RGBA;
+            const srcType = GLctx.UNSIGNED_BYTE;
+            GLctx.bindTexture(GLctx.TEXTURE_2D, texture);
+            GLctx.texImage2D(GLctx.TEXTURE_2D, level, internalFormat, srcFormat, srcType, video);
+        }
+        ,this
+        ,_videoTextureID);
+
+        #if 1
+        // TODO: properly handle size
+        if(!failure && !_assigned)
+        {
+            _assigned = true;
+            //printf("before setting _textureUV to gl texture id %d\n", _videoTextureID);
+            _textureUV->init((void*)_videoTextureID, 720, 400, TF_R8G8B8A8);
+             //printf("after setting _textureUV to gl texture id %d\n", _videoTextureID);
+        }
+        #endif
+
+        _dirty = failure == 0;
+
+        #if 0
 
         #if 1
         Image& _surfaceUV = _mtUV;
@@ -427,6 +524,56 @@ namespace oxygine
             destUV += dstUV.pitch;
         }
         #endif
+        
         _dirty = true;
+
+        #endif
+    }
+
+    void MovieSpriteWeb::doRender(const RenderState& rs)
+    {
+        convert();
+
+        if (!_ready)// && !_videoTexture)
+            return;
+
+        #if 0
+        printf("%s:%d:%s do render...\n", __FILE__, __LINE__, __func__);
+        #endif
+
+        Material::null->apply();
+
+        STDRenderer* renderer = STDRenderer::getCurrent();
+
+        renderer->setUberShaderProgram(_shader);
+        //renderer->setShaderFlags(UberShaderProgram::ALPHA_PREMULTIPLY);
+        renderer->setShaderFlags(0);
+
+        renderer->setTransform(rs.transform);
+        IVideoDriver::instance->setUniform("yaScale", &_yaScale, 1);
+
+        Color color = rs.getFinalColor(getColor());
+
+        #if 0
+        // TODO: properly handle size
+        if(_videoTextureID >= 0)
+            _textureUV->init((void*)_videoTextureID, 720, 400, TF_R8G8B8A8);
+        #endif
+        if(_videoTextureID >= 0)
+        {
+            oxglActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, _videoTextureID);
+            oxglActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, _videoTextureID);
+        }else{
+            rsCache().setTexture(0, _textureYA);
+            rsCache().setTexture(1, _textureUV);
+        }
+        rsCache().setBlendMode(blend_alpha);
+        renderer->addQuad(color, getAnimFrame().getSrcRect(), getDestRect());
+
+        renderer->flush();
     }
 }
+
+
