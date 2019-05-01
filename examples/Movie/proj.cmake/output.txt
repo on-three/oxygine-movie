@@ -1,0 +1,117 @@
+-- SDL includes: 
+-- Libs:     oxygine-framework;nul;SDL2main;SDL2;jpeg
+-- Platform: emscripten
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build
+/opt/cmake-3.13.2-Linux-x86_64/bin/cmake -S/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake -B/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build --check-build-system CMakeFiles/Makefile.cmake 0
+/opt/cmake-3.13.2-Linux-x86_64/bin/cmake -E cmake_progress_start /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/CMakeFiles /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/CMakeFiles/progress.marks
+make -f CMakeFiles/Makefile2 all
+make[1]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make -f oxygine-movie/CMakeFiles/oxygine-movie.dir/build.make oxygine-movie/CMakeFiles/oxygine-movie.dir/depend
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+cd /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build && /opt/cmake-3.13.2-Linux-x86_64/bin/cmake -E cmake_depends "Unix Makefiles" /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake /home/on-three/code/oxygine/oxygine-movie /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-movie /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-movie/CMakeFiles/oxygine-movie.dir/DependInfo.cmake --color=
+Dependee "/home/on-three/code/oxygine/oxygine-movie/src/web/MovieSpriteWeb.cpp" is newer than depender "oxygine-movie/CMakeFiles/oxygine-movie.dir/src/web/MovieSpriteWeb.cpp.o".
+Clearing dependencies in "/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-movie/CMakeFiles/oxygine-movie.dir/depend.make".
+Scanning dependencies of target oxygine-movie
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make -f oxygine-movie/CMakeFiles/oxygine-movie.dir/build.make oxygine-movie/CMakeFiles/oxygine-movie.dir/build
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+[  0%] Building CXX object oxygine-movie/CMakeFiles/oxygine-movie.dir/src/web/MovieSpriteWeb.cpp.o
+cd /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-movie && /home/on-three/code/emsdk-portable/emscripten/1.38.25/em++  -DOX_HAVE_LIBJPEG -DOX_HAVE_LIBPNG -DOX_NO_MT @CMakeFiles/oxygine-movie.dir/includes_CXX.rsp -std=c++11 -g -Wall -Wno-overloaded-virtual   -o CMakeFiles/oxygine-movie.dir/src/web/MovieSpriteWeb.cpp.o -c /home/on-three/code/oxygine/oxygine-movie/src/web/MovieSpriteWeb.cpp
+[  1%] Linking CXX static library liboxygine-movie.a
+cd /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-movie && /opt/cmake-3.13.2-Linux-x86_64/bin/cmake -P CMakeFiles/oxygine-movie.dir/cmake_clean_target.cmake
+cd /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-movie && /opt/cmake-3.13.2-Linux-x86_64/bin/cmake -E cmake_link_script CMakeFiles/oxygine-movie.dir/link.txt --verbose=1
+/home/on-three/code/emsdk-portable/emscripten/1.38.25/emar rc liboxygine-movie.a  @CMakeFiles/oxygine-movie.dir/objects1.rsp
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+[  2%] Built target oxygine-movie
+make -f CMakeFiles/Movie_1_main_js.dir/build.make CMakeFiles/Movie_1_main_js.dir/depend
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+cd /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build && /opt/cmake-3.13.2-Linux-x86_64/bin/cmake -E cmake_depends "Unix Makefiles" /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/CMakeFiles/Movie_1_main_js.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make -f CMakeFiles/Movie_1_main_js.dir/build.make CMakeFiles/Movie_1_main_js.dir/build
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make[2]: Nothing to be done for 'CMakeFiles/Movie_1_main_js.dir/build'.
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+[  4%] Built target Movie_1_main_js
+make -f oxygine-framework/CMakeFiles/oxygine-framework.dir/build.make oxygine-framework/CMakeFiles/oxygine-framework.dir/depend
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+cd /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build && /opt/cmake-3.13.2-Linux-x86_64/bin/cmake -E cmake_depends "Unix Makefiles" /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake /home/on-three/code/oxygine/oxygine-framework /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-framework /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-framework/CMakeFiles/oxygine-framework.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make -f oxygine-framework/CMakeFiles/oxygine-framework.dir/build.make oxygine-framework/CMakeFiles/oxygine-framework.dir/build
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make[2]: Nothing to be done for 'oxygine-framework/CMakeFiles/oxygine-framework.dir/build'.
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+[ 76%] Built target oxygine-framework
+make -f oxygine-sound/CMakeFiles/oxygine-sound.dir/build.make oxygine-sound/CMakeFiles/oxygine-sound.dir/depend
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+cd /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build && /opt/cmake-3.13.2-Linux-x86_64/bin/cmake -E cmake_depends "Unix Makefiles" /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake /home/on-three/code/oxygine/oxygine-sound /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-sound /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-sound/CMakeFiles/oxygine-sound.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make -f oxygine-sound/CMakeFiles/oxygine-sound.dir/build.make oxygine-sound/CMakeFiles/oxygine-sound.dir/build
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make[2]: Nothing to be done for 'oxygine-sound/CMakeFiles/oxygine-sound.dir/build'.
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+[ 88%] Built target oxygine-sound
+make -f oxygine-sound/tremor/CMakeFiles/tremor.dir/build.make oxygine-sound/tremor/CMakeFiles/tremor.dir/depend
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+cd /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build && /opt/cmake-3.13.2-Linux-x86_64/bin/cmake -E cmake_depends "Unix Makefiles" /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake /home/on-three/code/oxygine/oxygine-sound/dependencies/tremor /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-sound/tremor /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/oxygine-sound/tremor/CMakeFiles/tremor.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make -f oxygine-sound/tremor/CMakeFiles/tremor.dir/build.make oxygine-sound/tremor/CMakeFiles/tremor.dir/build
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make[2]: Nothing to be done for 'oxygine-sound/tremor/CMakeFiles/tremor.dir/build'.
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+[ 98%] Built target tremor
+make -f CMakeFiles/Movie.dir/build.make CMakeFiles/Movie.dir/depend
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+cd /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build && /opt/cmake-3.13.2-Linux-x86_64/bin/cmake -E cmake_depends "Unix Makefiles" /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/CMakeFiles/Movie.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+make -f CMakeFiles/Movie.dir/build.make CMakeFiles/Movie.dir/build
+make[2]: Entering directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+[ 98%] Linking CXX executable Movie.html
+/opt/cmake-3.13.2-Linux-x86_64/bin/cmake -E cmake_link_script CMakeFiles/Movie.dir/link.txt --verbose=1
+/home/on-three/code/emsdk-portable/emscripten/1.38.25/em++    -s USE_SDL=2 -s USE_LIBPNG=1 -s USE_ZLIB=1 -s FULL_ES2=1 -s USE_OGG=1 -std=c++11  --emrun -s NO_EXIT_RUNTIME=1 -s WARN_ON_UNDEFINED_SYMBOLS=1 -s ALLOW_MEMORY_GROWTH=1 -s -s FORCE_FILESYSTEM=1 --preload-file /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/../data/@/ -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap"]' -g -Wall -Wno-overloaded-virtual   @CMakeFiles/Movie.dir/objects1.rsp  -o Movie.html @CMakeFiles/Movie.dir/linklibs.rsp
+make[2]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+[100%] Built target Movie
+make[1]: Leaving directory '/home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build'
+/opt/cmake-3.13.2-Linux-x86_64/bin/cmake -E cmake_progress_start /home/on-three/code/oxygine/oxygine-movie/examples/Movie/proj.cmake/web-build/CMakeFiles 0
+Executing /usr/bin/xdg-open http://localhost:6931/Movie.html
+000 build settings OX_DEBUG arch unknown
+003 initialize oxygine
+004 SDL build
+007 creating window 960 640
+157 display size: 960 640
+162 DebugActor::initialize
+199 oxygine initialized, drawable size: 960 640
+563 at: HttpRequestTask (71) run: http://oxygine.org/test/logo.png
+581 compiled shader: 
+585 compiled shader: 
+1182 at: HttpRequestTask (71) _error
+1183 warning: http request error (0): http://oxygine.org/test/logo.png
+2100 compiled shader: 
+2103 compiled shader: 
+/home/on-three/code/oxygine/oxygine-movie/src/web/MovieSpriteWeb.cpp:158:onFrameLoaded movie of size 720x400 first frame loaded.
+Created and uploaded video texture with gl ID: 24
+2656 compiled shader: 
+2659 compiled shader: 
+4182 SDL_WINDOWEVENT 11
+338016 SDL_WINDOWEVENT 2
+9848 SDL_WINDOWEVENT 10
+9931 SDL_WINDOWEVENT 11
+10298 SDL_WINDOWEVENT 10
+12248 SDL_WINDOWEVENT 11
+13654 SDL_WINDOWEVENT 10
+24880 SDL_WINDOWEVENT 11
+25432 SDL_WINDOWEVENT 10
+25598 SDL_WINDOWEVENT 11
+365214 SDL_WINDOWEVENT 12
+365216 SDL_WINDOWEVENT 1
+27244 SDL_WINDOWEVENT 13
+27374 SDL_WINDOWEVENT 2
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 58448)
+----------------------------------------
+365590 SDL_WINDOWEVENT 10
+365679 SDL_WINDOWEVENT 11
+366856 SDL_WINDOWEVENT 10
+367273 SDL_WINDOWEVENT 11
+367730 SDL_WINDOWEVENT 13

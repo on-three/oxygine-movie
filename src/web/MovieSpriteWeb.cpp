@@ -25,6 +25,7 @@
 #include "emscripten.h"
 
 #define PREMULT_MOVIE 0
+//#define DEBUG_MOVIESPRITEWEB
 
 extern "C"
 {
@@ -33,9 +34,11 @@ EMSCRIPTEN_KEEPALIVE
 static int movieSpriteWeb_onFrameLoaded(void* self, int width, int height)
 {
     oxygine::MovieSpriteWeb* pMovie = static_cast<oxygine::MovieSpriteWeb*>(self);
-    #if 1
+    
+    #if defined(DEBUG_MOVIESPRITEWEB)
     printf("%s:%d:%s onFrameLoaded invoked with width: %d height: %d\n", __FILE__, __LINE__, __func__, width, height);
     #endif
+    
     pMovie->setBufferSize(width, height);
     pMovie->setSize(width, height);
      pMovie->setFrameLoaded(true);
@@ -157,7 +160,7 @@ namespace oxygine
     {
         if(_videoTexture)
         {
-            #if 1
+            #if defined(DEBUG_MOVIESPRITEWEB)
             printf("Not creating video texture because on already exists.\n");
             #endif
             return;
@@ -165,7 +168,7 @@ namespace oxygine
 
         if(_videoTextureID > 0)
         {
-            #if 1
+            #if defined(DEBUG_MOVIESPRITEWEB)
             printf("Not creating video texture because _videoTextureID is nonzero.\n");
             #endif
             return;
@@ -175,7 +178,9 @@ namespace oxygine
         glGenTextures(1, &_videoTextureID);
         glBindTexture(GL_TEXTURE_2D, _videoTextureID);
 
-        #if 1
+        #if defined(DEBUG_MOVIESPRITEWEB)
+        // DEBUG:
+        // Manually fill new video texture with some known color
         unsigned int* data = new unsigned int[720*400];
         for(int row = 0; row < 400; ++row)
             for(int col = 0; col < 720; ++col)
@@ -196,7 +201,7 @@ namespace oxygine
         _videoTexture = IVideoDriver::instance->createTexture();
         _videoTexture->init((void*)_videoTextureID, 720, 400, TF_R8G8B8A8);
 
-        #if 1
+        #if defined(DEBUG_MOVIESPRITEWEB)
         printf("%s:%d:%s created video texture with id: %d\n", __FILE__, __LINE__, __func__, _videoTextureID);
         #endif
     }
@@ -374,7 +379,7 @@ namespace oxygine
 
         if (!_ready)
         {
-            #if 1
+            #if defined(DEBUG_MOVIESPRITEWEB)
             printf("%s:%d:%s BAILING ON RENDER BECAUSE NOT READY\n", __FILE__, __LINE__, __func__);
             #endif
             return;
@@ -382,7 +387,7 @@ namespace oxygine
 
         if (!_videoTexture)
         {
-            #if 1
+            #if defined(DEBUG_MOVIESPRITEWEB)
             printf("%s:%d:%s BAILING ON RENDER BECAUSE no video texture\n", __FILE__, __LINE__, __func__);
             #endif
             return;
