@@ -307,7 +307,7 @@ namespace oxygine
         unsigned int self = *reinterpret_cast<unsigned int*>(this);
         EM_ASM_INT({
             var self = $0|0;
-            if(Module.videos[self])
+            if(Module['videos'] && Module.videos[self])
                 Module.videos[self].play();
             return 0;
         }
@@ -319,7 +319,7 @@ namespace oxygine
         unsigned int self = *reinterpret_cast<unsigned int*>(this);
         EM_ASM_INT({
             var self = $0|0;
-            if(Module.videos[self])
+            if(Module['videos'] && Module.videos[self])
                 Module.videos[self].pause();
             return 0;
         }
@@ -356,17 +356,20 @@ namespace oxygine
 
     void MovieSpriteWeb::_clear()
     {
+        _pause();
+
         if(_videoTexture)
             _videoTexture->release();
         _videoTexture = 0;
         _videoTextureID = -1;
+        _frameLoaded = false;
     }
 
     void MovieSpriteWeb::_update(const UpdateState&)
     {
         // we only have textures and image dimensions after the first frame has loaded
         #if 1
-        if(!_frameLoaded)
+        if(!_frameLoaded && _videoTexture)
             return;
         #endif
 
@@ -389,7 +392,6 @@ namespace oxygine
             const srcType = GLctx.UNSIGNED_BYTE;
             GLctx.bindTexture(GLctx.TEXTURE_2D, texture);
             GLctx.texImage2D(GLctx.TEXTURE_2D, level, internalFormat, srcFormat, srcType, video);
-            GLctx.bindTexture(GLctx.TEXTURE_2D, null);
         }
         ,this
         ,_videoTextureID);
