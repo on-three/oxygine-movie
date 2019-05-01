@@ -175,6 +175,7 @@ namespace oxygine
         glGenTextures(1, &_videoTextureID);
         glBindTexture(GL_TEXTURE_2D, _videoTextureID);
 
+        #if 1
         unsigned int* data = new unsigned int[720*400];
         for(int row = 0; row < 400; ++row)
             for(int col = 0; col < 720; ++col)
@@ -184,6 +185,7 @@ namespace oxygine
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 720, 400, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)data);
         //glGenerateMipmap(GL_TEXTURE_2D);
         delete [] data;
+        #endif
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -191,10 +193,8 @@ namespace oxygine
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-         #if 1
         _videoTexture = IVideoDriver::instance->createTexture();
         _videoTexture->init((void*)_videoTextureID, 720, 400, TF_R8G8B8A8);
-        #endif
 
         #if 1
         printf("%s:%d:%s created video texture with id: %d\n", __FILE__, __LINE__, __func__, _videoTextureID);
@@ -215,20 +215,9 @@ namespace oxygine
             var self = $0|0;
             var file = Pointer_stringify($1|0);
 
-            // DEBUG: ensure we can play ogv video
-            console.log("MovieSpriteWeb playing video ", file);
-            //if (x.canPlayType('video/ogg').length > 0) {
-            //    console.log("This browser supports ogg video");
-            //}else{
-            //    console.log("This browser DOES NOT SUPPORT ogg video");
-            //}
+            //console.log("MovieSpriteWeb playing video ", file);
             
             var video = document.createElement("VIDEO");
-
-            // TODO: support filetypes?
-            //if (video.canPlayType("video/mp4")) {
-            //    video.setAttribute("src","movie.mp4");
-            //} else {
 
             video.setAttribute("src",file);
             video.setAttribute("width", "320");
@@ -273,34 +262,7 @@ namespace oxygine
         // HACK: force a size to debug basic texture handling
         setBufferSize(720, 400);
         setSize(720, 400);
-        _movieRect = Rect(0, 0, 720, 400);
-
-        #if 0
-        // create an opengl texture we can upload video to
-        glGenTextures(1, &_videoTextureID);
-        glBindTexture(GL_TEXTURE_2D, _videoTextureID);
-
-        unsigned int* data = new unsigned int[720*400];
-        for(int row = 0; row < 400; ++row)
-            for(int col = 0; col < 720; ++col)
-            {
-                data[row * 720 + col] = 0xff00ffff;
-            }
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 720, 400, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)data);
-        //glGenerateMipmap(GL_TEXTURE_2D);
-        delete [] data;
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-        #if 1
-        printf("Created and uploaded video texture with gl ID: %d\n", _videoTextureID);
-        #endif
-        #endif
-    
+        _movieRect = Rect(0, 0, 720, 400);    
     }
 
     void MovieSpriteWeb::_play()
@@ -369,10 +331,8 @@ namespace oxygine
     void MovieSpriteWeb::_update(const UpdateState&)
     {
         // we only have textures and image dimensions after the first frame has loaded
-        #if 1
         if(!_frameLoaded || _videoTextureID < 1)
             return;
-        #endif
 
         int failure = EM_ASM_INT({
 
@@ -396,14 +356,6 @@ namespace oxygine
         }
         ,this
         ,_videoTextureID);
-
-        #if 0
-        if(!failure && !_videoTexture)
-        {
-            _videoTexture = IVideoDriver::instance->createTexture();
-            _videoTexture->init((void*)_videoTextureID, 720, 400, TF_R8G8B8A8);
-        }
-        #endif
 
         _dirty = failure == 0;
     }
@@ -449,23 +401,18 @@ namespace oxygine
 
         Color color = rs.getFinalColor(getColor());
 
-        #if 0
-        // TODO: properly handle size
-        if(_videoTextureID >= 0)
-            _textureUV->init((void*)_videoTextureID, 720, 400, TF_R8G8B8A8);
-        #endif
 
         if(_videoTexture)
         {
-           // oxglActiveTexture(GL_TEXTURE0);
-            //glBindTexture(GL_TEXTURE_2D, _videoTextureID);
-
             rsCache().setTexture(0, _videoTexture);
             rsCache().setTexture(1, _textureUV);
-        }else{
+        }
+        #if 0
+        else{
             rsCache().setTexture(0, _textureYA);
             rsCache().setTexture(1, _textureUV);
         }
+        #endif
         rsCache().setBlendMode(blend_alpha);
         renderer->addQuad(color, getAnimFrame().getSrcRect(), getDestRect());
 
