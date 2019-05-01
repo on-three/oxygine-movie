@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+BUILD=Debug
 BUILD_DIR=web-build
 MOVIE_DIR=../data/movies
 TARGET=Movie.html
@@ -16,9 +17,7 @@ MAKE="emmake make"
 CMAKE="emcmake cmake"
 
 #generate cmake project in the "build" folder
-${CMAKE} ..
+${CMAKE} -DCMAKE_BUILD_TYPE=${BUILD} ..
 
 #build it
 ${MAKE} VERBOSE=1
-
-
