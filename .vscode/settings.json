@@ -1,6 +1,7 @@
 {
   "files.associations": {
     "*.tcc": "cpp",
-    "thread": "cpp"
+    "thread": "cpp",
+    "array": "cpp"
   }
 }
