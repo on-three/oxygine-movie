@@ -19,7 +19,7 @@ namespace oxygine
     bool getFrameLoaded() const { return _frameLoaded;};
     void setFrameLoaded(bool v) {_frameLoaded = v;};
 
-    void setVideoTexture(GLuint id);
+    void createVideoTexture(const int width, const int height);
 
     protected:
         void _initPlayer() OVERRIDE;
@@ -38,7 +38,7 @@ namespace oxygine
         bool _frameLoaded = false;
 
         // Native video texture allocated by javascript
-        GLuint _videoTextureID = -1;
+        GLuint _videoTextureID = 0;
         spNativeTexture _videoTexture;
     };
 }

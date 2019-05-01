@@ -28,48 +28,19 @@
 
 extern "C"
 {
+
 EMSCRIPTEN_KEEPALIVE
-static int movieSpriteWeb_SetBufferSize(void* self, int width, int height)
+static int movieSpriteWeb_onFrameLoaded(void* self, int width, int height)
 {
     oxygine::MovieSpriteWeb* pMovie = static_cast<oxygine::MovieSpriteWeb*>(self);
     #if 1
-    printf("%s:%d:%s setting buffer size to %d,%d\n", __FILE__, __LINE__, __func__, width, height);
+    printf("%s:%d:%s onFrameLoaded invoked with width: %d height: %d\n", __FILE__, __LINE__, __func__, width, height);
     #endif
     pMovie->setBufferSize(width, height);
-    return 0;
-}
-EMSCRIPTEN_KEEPALIVE
-
-static int movieSpriteWeb_SetSize(void* self, int width, int height)
-{
-    oxygine::MovieSpriteWeb* pMovie = static_cast<oxygine::MovieSpriteWeb*>(self);
-    #if 1
-    printf("%s:%d:%s setting sprite size to %d,%d\n", __FILE__, __LINE__, __func__, width, height);
-    #endif
     pMovie->setSize(width, height);
-    return 0;
-}
-
-EMSCRIPTEN_KEEPALIVE
-static int movieSpriteWeb_SetFrameLoaded(void* self, bool ready)
-{
-    oxygine::MovieSpriteWeb* pMovie = static_cast<oxygine::MovieSpriteWeb*>(self);
-    #if 1
-    printf("%s:%d:%s setting movie frameloaded state to %s\n", __FILE__, __LINE__, __func__, ready? "TRUE":"FALSE");
-    #endif
-    pMovie->setFrameLoaded(ready);
-    return 0;
-}
-
-EMSCRIPTEN_KEEPALIVE
-static int movieSpriteWeb_setVideoTexture(void* self, int id)
-{
-    oxygine::MovieSpriteWeb* pMovie = static_cast<oxygine::MovieSpriteWeb*>(self);
-    #if 1
-    printf("%s:%d:%s setting video texture to %d\n", __FILE__, __LINE__, __func__, id);
-    #endif
+     pMovie->setFrameLoaded(true);
     // TODO: correct texture format
-    pMovie->setVideoTexture(id);
+    pMovie->createVideoTexture(width, height);
     return 0;
 }
 
@@ -182,9 +153,52 @@ namespace oxygine
         _clear();
     }
 
-    void MovieSpriteWeb::setVideoTexture(GLuint id)
+    void MovieSpriteWeb::createVideoTexture(const int width, const int height)
     {
-        _videoTextureID = id;
+        if(_videoTexture)
+        {
+            #if 1
+            printf("Not creating video texture because on already exists.\n");
+            #endif
+            return;
+        }
+
+        if(_videoTextureID > 0)
+        {
+            #if 1
+            printf("Not creating video texture because _videoTextureID is nonzero.\n");
+            #endif
+            return;
+        }
+
+        // create an opengl texture we can upload video to
+        glGenTextures(1, &_videoTextureID);
+        glBindTexture(GL_TEXTURE_2D, _videoTextureID);
+
+        unsigned int* data = new unsigned int[720*400];
+        for(int row = 0; row < 400; ++row)
+            for(int col = 0; col < 720; ++col)
+            {
+                data[row * 720 + col] = 0xff00ffff;
+            }
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 720, 400, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)data);
+        //glGenerateMipmap(GL_TEXTURE_2D);
+        delete [] data;
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+         #if 1
+        _videoTexture = IVideoDriver::instance->createTexture();
+        _videoTexture->init((void*)_videoTextureID, 720, 400, TF_R8G8B8A8);
+        #endif
+
+        #if 1
+        printf("%s:%d:%s created video texture with id: %d\n", __FILE__, __LINE__, __func__, _videoTextureID);
+        #endif
     }
    
 
@@ -231,25 +245,10 @@ namespace oxygine
                 var width = video.videoWidth; // returns the intrinsic width of the video
                 console.log("Size of video is ", width, "x", height);
 
-                var movieSpriteWeb_SetBufferSize = Module.cwrap('movieSpriteWeb_SetBufferSize',
+                var movieSpriteWeb_onFrameLoaded = Module.cwrap('movieSpriteWeb_onFrameLoaded',
                     'number', // return type
                     ['number', 'number', 'number']); // argument types
-
-                var movieSpriteWeb_SetSize = Module.cwrap('movieSpriteWeb_SetSize',
-                    'number', // return type
-                    ['number', 'number', 'number']); // argument types
-
-                var movieSpriteWeb_SetFrameLoaded = Module.cwrap('movieSpriteWeb_SetFrameLoaded',
-                    'number', // return type
-                    ['number', 'boolean']); // argument types
-
-                var movieSpriteWeb_setVideoTexture = Module.cwrap('movieSpriteWeb_setVideoTexture',
-                    'number', // return type
-                    ['number', 'number']); // argument types
-
-                movieSpriteWeb_SetBufferSize(self, width, height);
-                movieSpriteWeb_SetSize(self, width, height);
-                movieSpriteWeb_SetFrameLoaded(self, true);
+                movieSpriteWeb_onFrameLoaded(self, width, height);
 
                 return 0;
 
@@ -276,6 +275,7 @@ namespace oxygine
         setSize(720, 400);
         _movieRect = Rect(0, 0, 720, 400);
 
+        #if 0
         // create an opengl texture we can upload video to
         glGenTextures(1, &_videoTextureID);
         glBindTexture(GL_TEXTURE_2D, _videoTextureID);
@@ -298,6 +298,7 @@ namespace oxygine
 
         #if 1
         printf("Created and uploaded video texture with gl ID: %d\n", _videoTextureID);
+        #endif
         #endif
     
     }
@@ -361,7 +362,7 @@ namespace oxygine
         if(_videoTexture)
             _videoTexture->release();
         _videoTexture = 0;
-        _videoTextureID = -1;
+        _videoTextureID = 0;
         _frameLoaded = false;
     }
 
@@ -369,7 +370,7 @@ namespace oxygine
     {
         // we only have textures and image dimensions after the first frame has loaded
         #if 1
-        if(!_frameLoaded && _videoTexture)
+        if(!_frameLoaded || _videoTextureID < 1)
             return;
         #endif
 
@@ -396,7 +397,7 @@ namespace oxygine
         ,this
         ,_videoTextureID);
 
-        #if 1
+        #if 0
         if(!failure && !_videoTexture)
         {
             _videoTexture = IVideoDriver::instance->createTexture();
@@ -412,10 +413,28 @@ namespace oxygine
         // This call updates _textureUV and _textureYA from
         // the current movie sprite.
         // Probably not necesary as we maintain a separate video texture.
-        //convert();
+        #if 0
+        convert();
+        #else
+        _dirty = false;
+        _ready = true;
+        #endif
 
-        if (!_ready && !_videoTexture)
+        if (!_ready)
+        {
+            #if 1
+            printf("%s:%d:%s BAILING ON RENDER BECAUSE NOT READY\n", __FILE__, __LINE__, __func__);
+            #endif
             return;
+        }
+
+        if (!_videoTexture)
+        {
+            #if 1
+            printf("%s:%d:%s BAILING ON RENDER BECAUSE no video texture\n", __FILE__, __LINE__, __func__);
+            #endif
+            return;
+        }
 
         Material::null->apply();
 
