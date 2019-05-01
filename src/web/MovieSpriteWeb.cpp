@@ -130,13 +130,13 @@ namespace oxygine
                 "g=clamp(g, 0.0, 1.0);"
                 "b=clamp(b, 0.0, 1.0);"
 
-                "lowp vec4 color = vec4(r, g, b, 1.0);\n";
+                "lowp vec4 color = vec4(1.0, 1.0, 0.0, 1.0);\n";
         else
             base +=
                 "lowp float  r = y + 1.13983*v;\n"
                 "lowp float  g = y - 0.39465*u - 0.58060*v;\n"
                 "lowp float  b = y + 2.03211*u;\n"
-                "lowp vec4 color = vec4(r, g, b, 1.0);\n";
+                "lowp vec4 color = vec4(1.0, 1.0, 0.0, 1.0);\n";
 
         base +=
 #if PREMULT_MOVIE
@@ -258,7 +258,7 @@ namespace oxygine
             // DEBUG:
             // Normally we just use the element to provide us a video texture
             // but if we want to see the actual element on the page, uncomment this
-            document.body.appendChild(video);
+            //document.body.appendChild(video);
 
             // let emscripten keep track of these video elements
             // so we can interact with them
@@ -367,22 +367,11 @@ namespace oxygine
             return;
         #endif
 
-        static bool _assigned = false;
-
         int failure = EM_ASM_INT({
 
             var self = ($0|0);
             var id = ($1|0);
             var texture =  GL.textures[id];
-
-/*             // DEBUG:
-            if(texture)
-                console.log("Texture object for gl id: ", id," exists...");
-            else
-                console.log("Texture object for gl id: ", id," does not exist.") */;
-
-            // DEBUG:
-            //return 0;
 
             if(!Module['videos'] && !Module.videos[self])
             {
@@ -397,137 +386,20 @@ namespace oxygine
             const srcType = GLctx.UNSIGNED_BYTE;
             GLctx.bindTexture(GLctx.TEXTURE_2D, texture);
             GLctx.texImage2D(GLctx.TEXTURE_2D, level, internalFormat, srcFormat, srcType, video);
+            GLctx.bindTexture(GLctx.TEXTURE_2D, null);
         }
         ,this
         ,_videoTextureID);
 
         #if 1
-        // TODO: properly handle size
-        if(!failure && !_assigned)
+        if(!failure && !_videoTexture)
         {
-            _assigned = true;
-            //printf("before setting _textureUV to gl texture id %d\n", _videoTextureID);
-            _textureUV->init((void*)_videoTextureID, 720, 400, TF_R8G8B8A8);
-             //printf("after setting _textureUV to gl texture id %d\n", _videoTextureID);
+            _videoTexture = IVideoDriver::instance->createTexture();
+            _videoTexture->init((void*)_videoTextureID, 720, 400, TF_R8G8B8A8);
         }
         #endif
 
         _dirty = failure == 0;
-
-        #if 0
-
-        #if 1
-        Image& _surfaceUV = _mtUV;
-        Image& _surfaceYA = _mtYA;
-        int w = _movieRect.getWidth();
-        int h = _movieRect.getHeight();
-        int stride = w; // TODO: correct?
-        
-        Image memUV;
-        #if 0
-        memUV.init(ti.frame_width / 2, ti.frame_height / 4, TF_A8L8);
-        #else
-        memUV.init(w / 2, h / 4, TF_A8L8);
-        #endif
-        memUV.fillZero();
-
-        ImageData dstUV = memUV.lock();
-        unsigned char* destUV = dstUV.data;
-
-        Image memYA;
-        #if 0
-        memYA.init(ti.frame_width, ti.frame_height / 2, TF_A8L8);
-        #else
-        memYA.init(w, h / 2, TF_A8L8);
-        #endif
-
-        ImageData dstYA = memYA.lock();
-        unsigned char* destYA = dstYA.data;
-
-        #if 0
-        if (_hasAlpha)
-        {
-            h /= 2;
-            const unsigned char* srcA = srcY + ti.pic_height / 2 * buffer[0].stride;
-
-            for (int y = 0; y != h; y++)
-            {
-                const unsigned char* srcLineA = srcA;
-                const unsigned char* srcLineY = srcY;
-                unsigned char* destLineYA = destYA;
-
-                for (int x = 0; x != w; x++)
-                {
-                    *destLineYA++ = *srcLineY++;
-                    unsigned char a = *srcLineA++;
-                    int v = (a - 16) * 255 / 219;
-                    *destLineYA++ = Clamp2Byte(v);
-                }
-                srcY += stride;
-                srcA += stride;
-
-                destYA += dstYA.pitch;
-            }
-        }
-        else
-        #endif
-        {
-            for (int y = 0; y != h; y++)
-            {
-                //const unsigned char* srcLineY = srcY;
-                unsigned char* destLineYA = destYA;
-
-                for (int x = 0; x != w; x++)
-                {
-                    #if 0
-                    *destLineYA++ = *srcLineY++;
-                    #else
-                    *destLineYA++ = 255;
-                    #endif
-                }
-                //srcY += stride;
-                destYA += dstYA.pitch;
-            }
-        }
-
-        #if 0
-        const unsigned char* srcU = buffer[2].data + ti.pic_y / 2 * buffer[2].stride;
-        const unsigned char* srcV = buffer[1].data + ti.pic_y / 2 * buffer[1].stride;
-        stride = buffer[1].stride;
-        w = buffer[1].width;
-        h = buffer[1].height;
-        #endif
-
-        #if 0
-        if (_hasAlpha)
-            h /= 2;
-        #endif
-
-        for (int y = 0; y != h; y++)
-        {
-            //const unsigned char* srcLineU = srcU;
-            //const unsigned char* srcLineV = srcV;
-            unsigned char* destLineUV = destUV;
-
-            for (int x = 0; x != w; x++)
-            {
-                #if 0
-                *destLineUV++ = *srcLineU++;
-                *destLineUV++ = *srcLineV++;
-                #else
-                *destLineUV++ = 255;
-                *destLineUV++ = 255;
-                #endif
-            }
-            //srcU += stride;
-            //srcV += stride;
-            destUV += dstUV.pitch;
-        }
-        #endif
-        
-        _dirty = true;
-
-        #endif
     }
 
     void MovieSpriteWeb::doRender(const RenderState& rs)
@@ -536,10 +408,6 @@ namespace oxygine
 
         if (!_ready)// && !_videoTexture)
             return;
-
-        #if 0
-        printf("%s:%d:%s do render...\n", __FILE__, __LINE__, __func__);
-        #endif
 
         Material::null->apply();
 
@@ -559,12 +427,14 @@ namespace oxygine
         if(_videoTextureID >= 0)
             _textureUV->init((void*)_videoTextureID, 720, 400, TF_R8G8B8A8);
         #endif
-        if(_videoTextureID >= 0)
+
+        if(_videoTexture)
         {
-            oxglActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, _videoTextureID);
-            oxglActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, _videoTextureID);
+           // oxglActiveTexture(GL_TEXTURE0);
+            //glBindTexture(GL_TEXTURE_2D, _videoTextureID);
+
+            rsCache().setTexture(0, _videoTexture);
+            rsCache().setTexture(1, _textureUV);
         }else{
             rsCache().setTexture(0, _textureYA);
             rsCache().setTexture(1, _textureUV);

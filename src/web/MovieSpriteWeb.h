@@ -39,5 +39,6 @@ namespace oxygine
 
         // Native video texture allocated by javascript
         GLuint _videoTextureID = -1;
+        spNativeTexture _videoTexture;
     };
 }
