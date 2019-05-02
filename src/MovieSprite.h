@@ -60,6 +60,7 @@ namespace oxygine
 
         /**Set volume: [0-1]*/
         void setVolume(float v);
+        float getVolume() const;
 
         void setLooped(bool);
 
@@ -86,13 +87,14 @@ namespace oxygine
         virtual void _pause() = 0;
         virtual void _resume() = 0;
         virtual void _setVolume(float v) = 0;
+        virtual float _getVolume() const = 0;
         virtual void _stop() = 0;
         virtual bool _isPlaying() const = 0;
         virtual void _clear() = 0;
         virtual void _update(const UpdateState&) = 0;
         //virtual Point _getMovieSize() const = 0;
 
-
+        
         void doRender(const RenderState& rs) override;
         void doUpdate(const UpdateState& us) override;
 
@@ -115,7 +117,6 @@ namespace oxygine
         bool _ready;
         bool _skipFrames;
         bool _detachWhenDone;
-        float _volume;
 
         bool _paused;
         bool _playing;

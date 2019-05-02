@@ -1302,6 +1302,11 @@ namespace oxygine
 
     }
 
+    float MovieSpriteTheora::_getVolume() const
+    {
+        return 0.0f;
+    }
+
     void MovieSpriteTheora::_stop()
     {
         _clear();

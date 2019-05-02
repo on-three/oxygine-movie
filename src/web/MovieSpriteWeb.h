@@ -27,6 +27,7 @@ namespace oxygine
         void _pause() OVERRIDE;
         void _resume() OVERRIDE;
         void _setVolume(float v)  OVERRIDE;
+        void _getVolume() const OVERRIDE;
         void _stop() OVERRIDE;
         bool _isPlaying() const  OVERRIDE;
         void _clear() OVERRIDE;

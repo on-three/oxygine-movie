@@ -230,7 +230,7 @@ namespace oxygine
             video.setAttribute("controls", "false");
 
             // when the video loads, pull out the dimensions so we can create texturs
-            video.addEventListener('loadeddata', (event) => {
+            video.addEventListener('loadeddata', function(event) {
                 console.log('Yay! The readyState just increased to  ' + 
                     'HAVE_CURRENT_DATA or greater for the first time.');
 
@@ -304,6 +304,11 @@ namespace oxygine
     }
 
     void MovieSpriteWeb::_setVolume(float v)
+    {
+
+    }
+
+    float MovieSpriteWeb::_getVolume()const
     {
 
     }

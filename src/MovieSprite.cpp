@@ -19,7 +19,7 @@ namespace oxygine
         _completeDispatched(false),
         _bufferSize(0, 0),
         _movieRect(0, 0, 0, 0),
-        _initialized(false), _volume(100), _paused(false), _playing(false),
+        _initialized(false), _paused(false), _playing(false),
         _looped(false),
         _skipFrames(true),
         _ready(false),
@@ -144,8 +144,12 @@ namespace oxygine
 
     void MovieSprite::setVolume(float v)
     {
-        _volume = v;
         _setVolume(v);
+    }
+
+    float MovieSprite::getVolume() const
+    {
+        return _getVolume();
     }
 
     void MovieSprite::setLooped(bool l)
