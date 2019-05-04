@@ -44,6 +44,7 @@ static int movieSpriteWeb_onFrameLoaded(void* self, int width, int height)
      pMovie->setFrameLoaded(true);
     // TODO: correct texture format
     pMovie->createVideoTexture(width, height);
+
     return 0;
 }
 
@@ -310,7 +311,7 @@ namespace oxygine
 
     float MovieSpriteWeb::_getVolume()const
     {
-
+        return 1.0f;
     }
 
     void MovieSpriteWeb::_stop()

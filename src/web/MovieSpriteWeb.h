@@ -17,7 +17,11 @@ namespace oxygine
         _bufferSize = Point(width, height);
     }
     bool getFrameLoaded() const { return _frameLoaded;};
-    void setFrameLoaded(bool v) {_frameLoaded = v;};
+    void setFrameLoaded(bool v) {
+        _frameLoaded = v;
+        // we've got a first frame so consider the video 'loaded'
+        oxygine::MovieSprite::asyncLoaded();
+    };
 
     void createVideoTexture(const int width, const int height);
 
@@ -27,7 +31,7 @@ namespace oxygine
         void _pause() OVERRIDE;
         void _resume() OVERRIDE;
         void _setVolume(float v)  OVERRIDE;
-        void _getVolume() const OVERRIDE;
+        float _getVolume() const OVERRIDE;
         void _stop() OVERRIDE;
         bool _isPlaying() const  OVERRIDE;
         void _clear() OVERRIDE;

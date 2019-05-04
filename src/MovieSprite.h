@@ -35,8 +35,13 @@ namespace oxygine
 
         static UberShaderProgram* _shader;
 
-        //event dispatched when movie is completed
-        enum { COMPLETE = Event::COMPLETE };
+        enum
+        {
+            //event dispatched when movie ends
+            COMPLETE = Event::COMPLETE,
+            // event dispatched when movie has loaded/ready to play
+            LOADED = sysEventID('M', 'S', 'L')
+        };
 
         MovieSprite();
         ~MovieSprite();
@@ -81,6 +86,7 @@ namespace oxygine
         void clear();
 
         void asyncDone();
+        void asyncLoaded();
 
         virtual void _initPlayer() = 0;
         virtual void _play() = 0;
@@ -97,8 +103,6 @@ namespace oxygine
         
         void doRender(const RenderState& rs) override;
         void doUpdate(const UpdateState& us) override;
-
-
 
         Mutex _mutex;
 

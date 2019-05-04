@@ -270,4 +270,15 @@ namespace oxygine
             releaseRef();
         });
     }
+    void MovieSprite::asyncLoaded()
+    {
+        addRef();
+        core::getMainThreadDispatcher().postCallback([ = ]()
+        {
+            Event ev(MovieSprite::LOADED);
+            dispatchEvent(&ev);
+
+            releaseRef();
+        });
+    }
 }

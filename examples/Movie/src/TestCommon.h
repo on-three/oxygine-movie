@@ -56,6 +56,14 @@ public:
             //playNext();
         });
 
+        #if 1
+        // simply test loaded event
+        _movie->addEventListener(MovieSprite::LOADED, [&](Event*)
+        {
+            printf("%s:%d:%s MOVIE IS LOADED AND READY TO PLAY.\n", __FILE__, __LINE__, __func__);
+        });
+        #endif
+
 
 
         //create buttons

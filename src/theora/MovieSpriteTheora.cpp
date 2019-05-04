@@ -1272,6 +1272,9 @@ namespace oxygine
         printf("%s:%d:%s video _movieRect: %d x %d\n", __FILE__, __LINE__, __func__,  _movieRect.getWidth(), _movieRect.getHeight());
         #endif
         setSize(_movieRect.getSize());
+
+        // Running natively the video is always available and loaded
+        MovieSprite::asyncLoaded();
     }
 
     void MovieSpriteTheora::_play()
