@@ -321,11 +321,12 @@ namespace oxygine
 
     bool MovieSpriteWeb::_isPlaying() const
     {
-        #if 0
-        return  !pthread_equal(_threadID, pthread_self());
-        #else
-        return false;
-        #endif
+        return isLoaded() && _playing && !_paused;
+    }
+
+    bool MovieSpriteWeb::_isLoaded() const
+    {
+        return getFrameLoaded();
     }
 
     void MovieSpriteWeb::_clear()

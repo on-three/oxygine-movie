@@ -52,6 +52,7 @@ namespace oxygine
         void stop();
 
         bool isPlaying() const;
+        bool isLoaded() const;
 
 
         /**Change internal texture format. Should be called before Play. Supported TF_R8G8BA8 and TF_R5G6B5, default: TF_R5G6B5*/
@@ -95,6 +96,7 @@ namespace oxygine
         virtual void _setVolume(float v) = 0;
         virtual float _getVolume() const = 0;
         virtual void _stop() = 0;
+        virtual bool _isLoaded() const = 0;
         virtual bool _isPlaying() const = 0;
         virtual void _clear() = 0;
         virtual void _update(const UpdateState&) = 0;

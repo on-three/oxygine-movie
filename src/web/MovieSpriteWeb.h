@@ -34,6 +34,7 @@ namespace oxygine
         float _getVolume() const OVERRIDE;
         void _stop() OVERRIDE;
         bool _isPlaying() const  OVERRIDE;
+        bool _isLoaded() const OVERRIDE;
         void _clear() OVERRIDE;
         void _update(const UpdateState&) OVERRIDE;
 

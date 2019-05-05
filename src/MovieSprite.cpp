@@ -251,7 +251,13 @@ namespace oxygine
 
     bool MovieSprite::isPlaying() const
     {
-        return _playing && !_paused;
+        return _isLoaded() && _playing && !_paused;
+    }
+
+    bool MovieSprite::isLoaded() const
+    {
+        // defer to implementation
+        return _isLoaded();
     }
 
     void MovieSprite::asyncDone()

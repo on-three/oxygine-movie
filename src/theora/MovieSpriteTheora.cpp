@@ -1320,6 +1320,12 @@ namespace oxygine
         return  !pthread_equal(_threadID, pthread_self());
     }
 
+    bool MovieSpriteTheora::_isLoaded() const
+    {
+        // we're always loaded if playing for native theora player
+        return _playing;
+    }
+
     void MovieSpriteTheora::_clear()
     {
         _msg.clear();
