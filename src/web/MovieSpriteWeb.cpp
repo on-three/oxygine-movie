@@ -306,12 +306,33 @@ namespace oxygine
 
     void MovieSpriteWeb::_setVolume(float v)
     {
-
+        v = v > 1.0 ? 1.0 : v;
+        v = v < 0.0 ? 0.0 : v;
+        #if 0
+        printf("%s:%d:%s setting video volume to: %f\n",__FILE__, __LINE__, __func__, v);
+        #endif
+        EM_ASM_INT({
+            var self = $0;
+            var vol = $1;
+            //console.log("Attempting to set video volume to ", vol);
+            if(Module['videos'] && Module.videos[self])
+                Module.videos[self].volume = vol;
+            return 0;
+        }
+        ,this
+        ,v);
     }
 
     float MovieSpriteWeb::_getVolume()const
     {
-        return 1.0f;
+        float v = EM_ASM_DOUBLE({
+            var self = $0|0;
+            if(Module['videos'] && Module.videos[self])
+                return Module.videos[self].volume;
+            return 0;
+        }
+        ,this);
+        return v;
     }
 
     void MovieSpriteWeb::_stop()
