@@ -140,6 +140,12 @@ namespace oxygine
     void MovieSprite::doUpdate(const UpdateState& us)
     {
         _update(us);
+
+        if(_pauseTime >= 0.0f && getCurrentTime() >= _pauseTime)
+        {
+            pause();
+            clearPauseTime();
+        }
     }
 
     void MovieSprite::setVolume(float v)
@@ -172,6 +178,11 @@ namespace oxygine
         return _movieRect.getSize();
     }
 
+    float MovieSprite::getMovieLength() const
+    {
+        return _getMovieLength();
+    }
+
     float MovieSprite::getCurrentTime() const
     {
         return _getCurrentTime();
@@ -180,6 +191,21 @@ namespace oxygine
     void MovieSprite::setCurrentTime(const float s)
     {
         _setCurrentTime(s);
+    }
+
+    void MovieSprite::setPauseTime(const float t)
+    {
+        _pauseTime = t;
+    }
+
+    float MovieSprite::getPauseTime() const
+    {
+        return _pauseTime;
+    }
+
+    void MovieSprite::clearPauseTime()
+    {
+        _pauseTime = -1;
     }
 
     void MovieSprite::clear()

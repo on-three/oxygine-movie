@@ -54,7 +54,6 @@ namespace oxygine
         bool isPlaying() const;
         bool isLoaded() const;
 
-
         /**Change internal texture format. Should be called before Play. Supported TF_R8G8BA8 and TF_R5G6B5, default: TF_R5G6B5*/
         //void setFormat(TextureFormat tf);
 
@@ -68,6 +67,16 @@ namespace oxygine
         void setVolume(float v);
         float getVolume() const;
 
+        /** seek in file **/
+        float getMovieLength() const;
+        float getCurrentTime() const;
+        void setCurrentTime(const float s);
+
+        /** set a specific time to pause ("stop") the video at **/
+        void setPauseTime(const float t);
+        float getPauseTime() const;
+        void clearPauseTime();
+
         void setLooped(bool);
 
         /**skip frames if slow performance, default is True*/
@@ -76,9 +85,6 @@ namespace oxygine
         void setDetachWhenDone(bool detach = true);
         /**Returns original movie dimension*/
         Point getMovieSize() const;
-
-        float getCurrentTime() const;
-        void setCurrentTime(const float s);
 
         //bool beginRender(const RenderState& rs);
         //void endRender();
@@ -101,6 +107,7 @@ namespace oxygine
         virtual void _stop() = 0;
         virtual bool _isLoaded() const = 0;
         virtual bool _isPlaying() const = 0;
+        virtual float _getMovieLength() const = 0;
         virtual float _getCurrentTime() const = 0;
         virtual void _setCurrentTime(const float s) = 0;
         virtual void _clear() = 0;
@@ -137,6 +144,8 @@ namespace oxygine
         bool _initialized;
         bool _completeDispatched;
         bool _looped;
+
+        float _pauseTime = -1.0f;
     };
 
     DECLARE_SMART(MovieTween, spMovieTween);

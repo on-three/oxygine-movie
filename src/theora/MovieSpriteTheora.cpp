@@ -1326,6 +1326,11 @@ namespace oxygine
         return _playing;
     }
 
+    float MovieSpriteTheora::_getMovieLength() const
+    {
+        return 0.0f;
+    }
+
     float MovieSpriteTheora::_getCurrentTime() const
     {
         return 0.0f;

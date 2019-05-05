@@ -350,6 +350,21 @@ namespace oxygine
         return getFrameLoaded();
     }
 
+    float MovieSpriteWeb::_getMovieLength() const
+    {
+        float t = EM_ASM_DOUBLE({
+            var self = $0|0;
+            if(Module['videos'] && Module.videos[self])
+            {
+                var t = Module.videos[self].duration;
+                return t;
+            }
+            return 0;
+        }
+        ,this);
+        return t;
+    }
+
     float MovieSpriteWeb::_getCurrentTime() const
     {
         float t = EM_ASM_DOUBLE({
