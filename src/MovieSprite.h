@@ -77,6 +77,9 @@ namespace oxygine
         /**Returns original movie dimension*/
         Point getMovieSize() const;
 
+        float getCurrentTime() const;
+        void setCurrentTime(const float s);
+
         //bool beginRender(const RenderState& rs);
         //void endRender();
 
@@ -98,6 +101,8 @@ namespace oxygine
         virtual void _stop() = 0;
         virtual bool _isLoaded() const = 0;
         virtual bool _isPlaying() const = 0;
+        virtual float _getCurrentTime() const = 0;
+        virtual void _setCurrentTime(const float s) = 0;
         virtual void _clear() = 0;
         virtual void _update(const UpdateState&) = 0;
         //virtual Point _getMovieSize() const = 0;

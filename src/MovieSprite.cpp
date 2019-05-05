@@ -172,6 +172,16 @@ namespace oxygine
         return _movieRect.getSize();
     }
 
+    float MovieSprite::getCurrentTime() const
+    {
+        return _getCurrentTime();
+    }
+
+    void MovieSprite::setCurrentTime(const float s)
+    {
+        _setCurrentTime(s);
+    }
+
     void MovieSprite::clear()
     {
         _clear();

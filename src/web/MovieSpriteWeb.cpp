@@ -350,6 +350,39 @@ namespace oxygine
         return getFrameLoaded();
     }
 
+    float MovieSpriteWeb::_getCurrentTime() const
+    {
+        float t = EM_ASM_DOUBLE({
+            var self = $0|0;
+            if(Module['videos'] && Module.videos[self])
+            {
+                var t = Module.videos[self].currentTime;
+                //console.log("Movie reports current time is now: ", t);
+                return t;
+            }
+            return 0;
+        }
+        ,this);
+        return t;
+    }
+
+    void MovieSpriteWeb::_setCurrentTime(const float s)
+    {
+        #if 0
+        printf("%s:%d:%s setting video volume to: %f\n",__FILE__, __LINE__, __func__, v);
+        #endif
+        EM_ASM_INT({
+            var self = $0;
+            var t = $1;
+            //console.log("Attempting to set video time to ", vol);
+            if(Module['videos'] && Module.videos[self])
+                Module.videos[self].currentTime = t;
+            return 0;
+        }
+        ,this
+        ,s);
+    }
+
     void MovieSpriteWeb::_clear()
     {
         _pause();

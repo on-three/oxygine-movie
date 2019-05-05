@@ -35,6 +35,8 @@ namespace oxygine
         void _stop() OVERRIDE;
         bool _isPlaying() const  OVERRIDE;
         bool _isLoaded() const OVERRIDE;
+        float _getCurrentTime() const OVERRIDE;
+        void _setCurrentTime(const float s) OVERRIDE;
         void _clear() OVERRIDE;
         void _update(const UpdateState&) OVERRIDE;
 
