@@ -544,8 +544,6 @@ namespace oxygine
             {
                 timeMS video_time = timeMS(th_granule_time(video->mTheora.mCtx, dec.mGranulepos) * 1000);
 
-
-
                 // The granulepos for a packet gives the time of the end of the
                 // display interval of the frame in the packet.  We keep the
                 // granulepos of the frame we've decoded and use this to know the
@@ -843,6 +841,7 @@ namespace oxygine
         Point _frameSize;
         //Point _picSize;
         Rect _pictureRect;
+        timeMS _video_time = 0; // current video time
 
         bool& _looped;
         bool _hasAlpha;
@@ -869,6 +868,8 @@ namespace oxygine
 
         void init(file::handle);
         bool play(file::handle);
+
+        float getVideoTime()const{return _video_time/1000.0f;};
 
     protected:
         void frameUpdated();
@@ -995,6 +996,7 @@ namespace oxygine
             {
                 ogg_int64_t position = 0;
                 timeMS video_time = timeMS(th_granule_time(video->mTheora.mCtx, mGranulepos) * 1000);
+                _video_time = video_time;
                 //logs::messageln("%d - %d", video_time, mGranulepos);
                 int tm = 0;
 
@@ -1016,6 +1018,7 @@ namespace oxygine
                         _msg.reply(0);
                     }
                     video_time = timeMS(th_granule_time(video->mTheora.mCtx, mGranulepos) * 1000);
+                    _video_time = video_time;
                     if (tm > video_time)
                         _skipNextFrame = _allowSkipFrames;
                 }
@@ -1333,7 +1336,7 @@ namespace oxygine
 
     float MovieSpriteTheora::_getCurrentTime() const
     {
-        return 0.0f;
+        return _decoder->getVideoTime();
     }
 
     void MovieSpriteTheora::_setCurrentTime(const float s)

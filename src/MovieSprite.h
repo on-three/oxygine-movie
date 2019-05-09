@@ -72,10 +72,13 @@ namespace oxygine
         float getCurrentTime() const;
         void setCurrentTime(const float s);
 
-        /** set a specific time to pause ("stop") the video at **/
-        void setPauseTime(const float t);
-        float getPauseTime() const;
-        void clearPauseTime();
+        /** video subsection play support **/
+        void setStartTime(const float t);
+        float getStartTime() const;
+        void clearStartTime();
+        void setEndTime(const float t);
+        float getEndTime() const;
+        void clearEndTime();
 
         void setLooped(bool);
 
@@ -145,6 +148,7 @@ namespace oxygine
         bool _completeDispatched;
         bool _looped;
 
+        float _startTime = 0.0;
         float _pauseTime = -1.0f;
     };
 

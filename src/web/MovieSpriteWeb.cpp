@@ -225,7 +225,14 @@ namespace oxygine
             
             var video = document.createElement("VIDEO");
 
-            video.setAttribute("src",file);
+            // First see if we have this video cached as a blob
+            // If we don't just play off the provided url
+            if(Module.luaPrefetch && Module.luaPrefetch[file])
+            {
+                video.setAttribute("src", Module.luaPrefetch[file]);
+            }else{
+                video.setAttribute("src",file);
+            }
             video.setAttribute("width", "320");
             video.setAttribute("height", "240");
             video.setAttribute("controls", "false");

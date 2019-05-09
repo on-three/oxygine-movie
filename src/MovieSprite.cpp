@@ -143,8 +143,13 @@ namespace oxygine
 
         if(_pauseTime >= 0.0f && getCurrentTime() >= _pauseTime)
         {
-            pause();
-            clearPauseTime();
+            if(_looped)
+            {
+                setCurrentTime(_startTime);
+            }else{
+                pause();
+                clearEndTime();
+            }
         }
     }
 
@@ -193,17 +198,32 @@ namespace oxygine
         _setCurrentTime(s);
     }
 
-    void MovieSprite::setPauseTime(const float t)
+    void MovieSprite::setStartTime(const float t)
+    {
+        _startTime = t;
+    }
+
+    float MovieSprite::getStartTime() const
+    {
+        return _startTime;
+    }
+
+    void MovieSprite::clearStartTime()
+    {
+        _startTime = 0.0f;
+    }
+
+    void MovieSprite::setEndTime(const float t)
     {
         _pauseTime = t;
     }
 
-    float MovieSprite::getPauseTime() const
+    float MovieSprite::getEndTime() const
     {
         return _pauseTime;
     }
 
-    void MovieSprite::clearPauseTime()
+    void MovieSprite::clearEndTime()
     {
         _pauseTime = -1;
     }
