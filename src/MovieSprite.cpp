@@ -149,6 +149,7 @@ namespace oxygine
             }else{
                 pause();
                 clearEndTime();
+                asyncDone();
             }
         }
     }
