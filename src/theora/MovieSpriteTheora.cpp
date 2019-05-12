@@ -1336,7 +1336,10 @@ namespace oxygine
 
     float MovieSpriteTheora::_getCurrentTime() const
     {
-        return _decoder->getVideoTime();
+        if(_decoder)
+            return _decoder->getVideoTime();
+        else
+            return 0.0f;
     }
 
     void MovieSpriteTheora::_setCurrentTime(const float s)
