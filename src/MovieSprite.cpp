@@ -149,7 +149,15 @@ namespace oxygine
             }else{
                 pause();
                 clearEndTime();
-                asyncDone();
+                #if 1
+                core::getMainThreadDispatcher().postCallback([ = ]()
+                {
+                    //_playing = false;
+
+                    Event ev(MovieSprite::COMPLETE);
+                    dispatchEvent(&ev);
+                });
+                #endif
             }
         }
     }
