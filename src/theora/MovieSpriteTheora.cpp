@@ -1228,12 +1228,19 @@ namespace oxygine
             "}\n"
             "#endif\n";
 
-
+        #if defined(__ANDROID__)
+        // Android vertex shader fails due to multiple prototypes defined for replaced_get_base()
+        _shader->init(
+            STDRenderer::uberShaderBody,
+            "#define REPLACED_GET_BASE\n",
+            base.c_str());
+        #else
         _shader->init(
             STDRenderer::uberShaderBody,
             "#define REPLACED_GET_BASE\n"
             "lowp vec4 replaced_get_base();",
             base.c_str());
+        #else
     }
 
     void MovieSprite::free()
