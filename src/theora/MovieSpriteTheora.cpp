@@ -1240,7 +1240,7 @@ namespace oxygine
             "#define REPLACED_GET_BASE\n"
             "lowp vec4 replaced_get_base();",
             base.c_str());
-        #else
+        #endif
     }
 
     void MovieSprite::free()
