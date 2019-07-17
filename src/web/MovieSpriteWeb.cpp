@@ -206,22 +206,13 @@ namespace oxygine
         printf("%s:%d:%s created video texture with id: %d\n", __FILE__, __LINE__, __func__, _videoTextureID);
         #endif
     }
-   
 
-    void MovieSpriteWeb::_initPlayer()
-    {
-        // To satisfy the MovieSprite base class
-        // we MUST define _bufferSize in this method, which can be pretty much
-        // the movie size (width x height) as an oxygine::Point
+    #if defined(__EMSCRIPTEN__)
+        EM_JS(void, emscriptenLoadVideo, (MovieSpriteWeb* self, const char* urlStr),{
 
-        // just start playing the video at '_fname' relative url
-        unsigned int self = *reinterpret_cast<unsigned int*>(this);
-        EM_ASM_INT({
+            var file = UTF8ToString(urlStr);
 
-            var self = $0|0;
-            var file = Pointer_stringify($1|0);
-
-            //console.log("MovieSpriteWeb playing video ", file);
+            console.log("MovieSpriteWeb playing video ", file);
             
             var video = document.createElement("VIDEO");
 
@@ -268,9 +259,17 @@ namespace oxygine
             Module.videos[self] = video;
 
             return 0;
-        }
-        ,this
-        ,_fname.c_str());
+        });
+    #endif
+   
+
+    void MovieSpriteWeb::_initPlayer()
+    {
+        // To satisfy the MovieSprite base class
+        // we MUST define _bufferSize in this method, which can be pretty much
+        // the movie size (width x height) as an oxygine::Point
+
+        emscriptenLoadVideo(this, _fname.c_str());
 
         // HACK: force a size to debug basic texture handling
         setBufferSize(720, 400);
